@@ -1,0 +1,69 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+version = "1.0.0${System.getenv("BRANCH_NAME") != null && System.getenv("BRANCH_NAME").equalsIgnoreCase("master") ? "" : "-SNAPSHOT"}"
+group = 'com.halosolutions'
+archivesBaseName = 'rtmpdump'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
+    defaultConfig {
+        minSdkVersion 11
+        targetSdkVersion 25
+
+        ndk {
+            moduleName "rtmp"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    sourceSets.main {
+        jniLibs.srcDir 'src/main/libs' //set .so files location to libs
+        jni.srcDirs = [] //disable automatic ndk-build call
+    }
+
+    // call regular ndk-build(.cmd) script from app directory
+    task ndkBuild(type: Exec) {
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            commandLine 'ndk-build.cmd', '-C', file('src/main').absolutePath
+        } else {
+            commandLine System.env.ANDROID_NDK_HOME + '/ndk-build', '-C', file('src/main').absolutePath
+        }
+    }
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+}
+
+dependencies {
+    compile 'commons-io:commons-io:2.4'
+}
+
+configurations {
+    deployerJars
+}
+
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+        repository(url: "http://nexus.manadrdev.com/content/repositories/releases/") {
+            authentication(userName: "${System.getenv("MANADR_USER")}", password: "${System.getenv("MANADR_PASSWORD")}")
+        }
+        snapshotRepository(url: "http://nexus.manadrdev.com/content/repositories/snapshots/") {
+            authentication(userName: "${System.getenv("MANADR_USER")}", password: "${System.getenv("MANADR_PASSWORD")}")
+        }
+    }
+}
