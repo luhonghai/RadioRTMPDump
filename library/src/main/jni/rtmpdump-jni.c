@@ -1409,7 +1409,7 @@ JNIEXPORT void JNICALL Java_com_halosolutions_rtmpdump_RTMP_init(JNIEnv * env, j
         "-n", "f-radiko.smartstream.ne.jp",
         "-r", "rtmpe://f-radiko.smartstream.ne.jp",
         "--app", "TBS/_definst_",
-        "--playpath", "simul-stream.stream",
+        "--playpath", "simul-stream.stream  ",
         "-C", "S:",
         "-C", "S:",
         "-C", "S:",

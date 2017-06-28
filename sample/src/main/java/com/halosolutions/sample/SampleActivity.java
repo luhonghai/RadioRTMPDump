@@ -72,7 +72,7 @@ public class SampleActivity extends Activity {
                                 }
                                 RTMPSuck rtmpSuck = new RTMPSuck();
                                 rtmpSuckMap.put("abc", rtmpSuck);
-                                rtmpSuck.init("S:");
+                                rtmpSuck.init("S:", 2135);
                             } else {
                                 Log.e("RTMTDUMP","Could not found dictionary: " + file.getAbsolutePath());
                             }
@@ -102,7 +102,12 @@ public class SampleActivity extends Activity {
 
                 RTMPSuck rtmpSuck = rtmpSuckMap.get("abc");
                 if (rtmpSuck != null) {
-                    rtmpSuck.update("S:jGreh9cItmGT0_nWB1LePQ","rtmpe://f-radiko.smartstream.ne.jp/TBS/_definst_","TBS/_definst_");
+                    String stationId ="TBS";
+                    String token = "jGreh9cItmGT0_nWB1LePQ";
+                    rtmpSuck.update("S:" + token,"rtmpe://f-radiko.smartstream.ne.jp/" +  stationId + "/_definst_", stationId + "/_definst_");
+                    // TBS < station ID
+                    //rtmpe://f-radiko.smartstream.ne.jp/TBS/_definst_/simul-stream.stream
+                    // -> rtmp://127.0.0.1:1935/TBS/_definst_/simul-stream.stream
                 }
             }
         });
