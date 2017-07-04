@@ -1128,7 +1128,7 @@ serverThread(void *arg)
 	  *srv2 = *server;
 	  srv2->socket = sockfd;
 	  /* Create a new thread and transfer the control to that */
-	  ThreadCreate(doServe, srv2);
+	  doServe(srv2);
 	  RTMP_Log(RTMP_LOGDEBUG, "%s: processed request\n", __FUNCTION__);
 	}
       else
@@ -1220,7 +1220,7 @@ startStreaming(const char *address, int port,
 
   server->socket = sockfd;
 
-  ThreadCreate(serverThread, server);
+  serverThread(server);
 
   return server;
 }
@@ -1709,14 +1709,18 @@ JNIEXPORT void JNICALL Java_com_halosolutions_rtmpdump_RTMPSuck_update(JNIEnv * 
     currentTcURL = strdup(nativeTcURL);
 }
 
-JNIEXPORT void JNICALL Java_com_halosolutions_rtmpdump_RTMPSuck_init(JNIEnv * env, jobject obj, jstring token, jint rPort)
+JNIEXPORT void JNICALL Java_com_halosolutions_rtmpdump_RTMPSuck_init(JNIEnv * env, jobject obj, jstring token, jstring tcURL, jstring app, jint rPort)
 {
-
         RTMP_ctrlC = FALSE;
         const char *nativeToken = (*env)->GetStringUTFChars(env, token, 0);
+        const char *nativeApp = (*env)->GetStringUTFChars(env, app, 0);
+        const char *nativeTcURL = (*env)->GetStringUTFChars(env, tcURL, 0);
         int port = (int) rPort;
-        RTMP_LogPrintf("Start rtmp server. Token: %s. Port %d\n", nativeToken,
-                port);
+        RTMP_LogPrintf("Init RTMPSuck Token: %s, TcURL: %s. App: %s. Port %d\n", nativeToken,
+            	    nativeTcURL, nativeApp, port);
+        currentToken = strdup(nativeToken);
+        currentApp = strdup(nativeApp);
+        currentTcURL = strdup(nativeTcURL);
         char *v[] = {
                 "-v",
                 "-l", "2",
@@ -1726,7 +1730,6 @@ JNIEXPORT void JNICALL Java_com_halosolutions_rtmpdump_RTMPSuck_init(JNIEnv * en
                 "--playpath", "simul-stream.stream"
                 };
         char **argv = v;
-        currentToken = strdup(nativeToken);
         int argc = 11;
         main_rtmpsuck(argc, argv, currentToken, port);
 

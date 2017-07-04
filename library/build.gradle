@@ -35,7 +35,7 @@ android {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             commandLine 'ndk-build.cmd', '-C', file('src/main').absolutePath
         } else {
-            commandLine System.env.ANDROID_NDK_HOME + '/ndk-build', '-C', file('src/main').absolutePath
+            commandLine '/Users/luhonghai/Library/Android/sdk/ndk-bundle/ndk-build', '-C', file('src/main').absolutePath
         }
     }
     tasks.withType(JavaCompile) {
