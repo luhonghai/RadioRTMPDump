@@ -1,6 +1,5 @@
 package com.halosolutions.sample;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +35,7 @@ public class SampleActivity extends AppCompatActivity {
     private String dest;
     private final WeakHashMap<String,RTMPSuck> rtmpSuckMap =new WeakHashMap<String, RTMPSuck>();
     private final WeakHashMap<String,RTMP> rtmpWeakHashMap =new WeakHashMap<String, RTMP>();
+
 
 
     @Override
@@ -99,30 +99,6 @@ public class SampleActivity extends AppCompatActivity {
                     }).start();
                     record = true;
                 }
-            }
-        });
-
-        btStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progress.setVisibility(View.INVISIBLE);
-                if (rtmpSuckMap.containsKey("abc")) {
-                    RTMPSuck rtmpSuck = rtmpSuckMap.get("abc");
-                    if (rtmpSuck != null) {
-                        rtmpSuck.stop();
-                        rtmpSuckMap.remove("abc");
-                    }
-                    run = false;
-                }
-                if (rtmpWeakHashMap.containsKey("abc")) {
-                    RTMP rtmpSuck = rtmpWeakHashMap.get("abc");
-                    if (rtmpSuck != null) {
-                        rtmpSuck.stop();
-                        rtmpWeakHashMap.remove("abc");
-                    }
-                    record = false;
-                }
-
             }
         });
 
